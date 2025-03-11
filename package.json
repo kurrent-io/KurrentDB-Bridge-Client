@@ -1,0 +1,54 @@
+{
+  "name": "@peerson/peerson",
+  "version": "1.0.5",
+  "description": "",
+  "main": "./lib/index.js",
+  "scripts": {
+    "test": "tsc &&cargo test",
+    "cargo-build": "tsc &&cargo build --message-format=json-render-diagnostics > cargo.log",
+    "cross-build": "tsc &&cross build --message-format=json-render-diagnostics > cross.log",
+    "postcargo-build": "neon dist < cargo.log",
+    "postcross-build": "neon dist -m /target < cross.log",
+    "debug": "npm run cargo-build --",
+    "build": "npm run cargo-build -- --release",
+    "cross": "npm run cross-build -- --release",
+    "prepack": "tsc &&neon update",
+    "version": "neon bump --binaries platforms && git add .",
+    "release": "gh workflow run release.yml -f dryrun=false -f version=patch",
+    "dryrun": "gh workflow run publish.yml -f dryrun=true"
+  },
+  "author": "Kurrent DB",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
+      },
+      "require": {
+        "types": "./lib/index.d.ts",
+        "default": "./lib/index.js"
+      }
+    }
+  },
+  "types": "./lib/index.d.ts",
+  "files": [
+    "lib/**/*.?({c,m}){t,j}s"
+  ],
+  "neon": {
+    "type": "library",
+    "org": "@peerson",
+    "platforms": "common",
+    "load": "./src/load.ts"
+  },
+  "devDependencies": {
+    "@neon-rs/cli": "^0.1.82",
+    "@tsconfig/node20": "^20.1.4",
+    "@types/node": "^20.11.16",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@neon-rs/load": "^0.1.82"
+  },
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
+}
