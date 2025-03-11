@@ -1,7 +1,7 @@
 {
   "name": "@kurrent/bridge-linux-x64-gnu",
   "description": "Prebuilt binary package for `bridge` on `linux-x64-gnu`.",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0",
   "os": [
     "linux"
   ],
