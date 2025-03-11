@@ -1,7 +1,7 @@
 [package]
 name = "bridge"
 version = "0.1.0"
-description = "A NodeJS binding for the KurrentDB Rust client"
+description = "A NodeJS binding for the Kurrent Rust client"
 authors = ["Kurrent Inc"]
 license = "Apache-2.0"
 edition = "2021"

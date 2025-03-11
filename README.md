@@ -1,10 +1,10 @@
-# bridge
+# peerson
 
 This project was bootstrapped by [create-neon](https://www.npmjs.com/package/create-neon).
 
-## Building bridge
+## Building peerson
 
-Building bridge requires a [supported version of Node and Rust](https://github.com/neon-bindings/neon#platform-support).
+Building peerson requires a [supported version of Node and Rust](https://github.com/neon-bindings/neon#platform-support).
 
 To run the build, run:
 
@@ -14,9 +14,9 @@ $ npm run build
 
 This command uses the [@neon-rs/cli](https://www.npmjs.com/package/@neon-rs/cli) utility to assemble the binary Node addon from the output of `cargo`.
 
-## Exploring bridge
+## Exploring peerson
 
-After building bridge, you can explore its exports at the Node console:
+After building peerson, you can explore its exports at the Node console:
 
 ```sh
 $ npm i
@@ -65,7 +65,7 @@ Runs the unit tests by calling `cargo test`. You can learn more about [adding te
 The directory structure of this project is:
 
 ```
-bridge/
+peerson/
 ├── Cargo.toml
 ├── README.md
 ├── lib/
@@ -73,7 +73,7 @@ bridge/
 |   ├── index.mts
 |   └── index.cts
 ├── crates/
-|   └── bridge/
+|   └── peerson/
 |       └── src/
 |           └── lib.rs
 ├── platforms/

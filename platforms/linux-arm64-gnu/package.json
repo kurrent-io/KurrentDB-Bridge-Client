@@ -1,6 +1,6 @@
 {
   "name": "@kurrent/linux-arm64-gnu",
-  "description": "Prebuilt binary package for `bridge` on `linux-arm64-gnu`.",
+  "description": "Prebuilt binary package for `peerson` on `linux-arm64-gnu`.",
   "version": "1.0.0-alpha.1",
   "os": [
     "linux"
