@@ -1,8 +1,8 @@
 {
   "name": "@kurrent/bridge",
-  "version": "1.0.5",
+  "version": "1.0.1",
   "description": "",
-  "main": "./lib/index.js",
+  "main": "./lib/index.cjs",
   "scripts": {
     "test": "tsc &&cargo test",
     "cargo-build": "tsc &&cargo build --message-format=json-render-diagnostics > cargo.log",
@@ -17,21 +17,21 @@
     "release": "gh workflow run release.yml -f dryrun=false -f version=patch",
     "dryrun": "gh workflow run publish.yml -f dryrun=true"
   },
-  "author": "Kurrent DB",
-  "license": "Apache-2.0",
+  "author": "",
+  "license": "ISC",
   "exports": {
     ".": {
       "import": {
-        "types": "./lib/index.d.ts",
-        "default": "./lib/index.js"
+        "types": "./lib/index.d.mts",
+        "default": "./lib/index.mjs"
       },
       "require": {
-        "types": "./lib/index.d.ts",
-        "default": "./lib/index.js"
+        "types": "./lib/index.d.cts",
+        "default": "./lib/index.cjs"
       }
     }
   },
-  "types": "./lib/index.d.ts",
+  "types": "./lib/index.d.cts",
   "files": [
     "lib/**/*.?({c,m}){t,j}s"
   ],
@@ -39,7 +39,7 @@
     "type": "library",
     "org": "@kurrent",
     "platforms": "common",
-    "load": "./src/load.ts"
+    "load": "./src/load.cts"
   },
   "devDependencies": {
     "@neon-rs/cli": "^0.1.82",
@@ -49,6 +49,5 @@
   },
   "dependencies": {
     "@neon-rs/load": "^0.1.82"
-  },
-  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
+  }
 }

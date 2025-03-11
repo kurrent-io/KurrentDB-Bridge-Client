@@ -42,12 +42,9 @@ runs:
         node-version: ${{ env.NODE_VERSION }}
         registry-url: ${{ env.NPM_REGISTRY }}
         cache: npm
-    - name: Corepack
-      shell: bash
-      run: corepack enable
     - name: Install Dependencies
       shell: bash  
-      run: yarn install --immutable
+      run: npm ci   
     - name: Compute Rust Target
       if: ${{ inputs['use-rust'] == 'true' }}
       id: target
