@@ -1,5 +1,5 @@
 {
-  "name": "@peerson/peerson",
+  "name": "@kurrent/bridge",
   "version": "1.0.5",
   "description": "",
   "main": "./lib/index.js",
@@ -37,7 +37,7 @@
   ],
   "neon": {
     "type": "library",
-    "org": "@peerson",
+    "org": "@kurrent",
     "platforms": "common",
     "load": "./src/load.ts"
   },
