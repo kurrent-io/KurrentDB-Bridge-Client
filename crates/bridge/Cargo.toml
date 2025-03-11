@@ -31,5 +31,5 @@ features = ["serde"]
 version = "1"
 features = ["serde", "v4"]
 
-[dependencies.eventstore]
-version = "4.0.0"
+[dependencies.kurrentdb]
+version = "1.0.0-alpha.1"
