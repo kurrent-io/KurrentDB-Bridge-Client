@@ -74,7 +74,7 @@ jobs:
           fi
           echo publish=true | tee -a $GITHUB_OUTPUT
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup Neon Environment
         uses: ./.github/actions/setup
         with:
@@ -86,7 +86,7 @@ jobs:
         run: |
           git config --global user.name $ACTIONS_USER
           git config --global user.email $ACTIONS_EMAIL
-          npm version -m 'v%s' '${{ (inputs.version == 'custom' && inputs.custom) || inputs.version }}'
+          yarn version --new-version "${{ (inputs.version == 'custom' && inputs.custom) || inputs.version }}" --message "v%s"
           git push --follow-tags
           echo tag=$(git describe --abbrev=0) | tee -a $GITHUB_OUTPUT
 
@@ -112,7 +112,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ needs.setup.outputs.ref }}
       - name: Setup Neon Environment

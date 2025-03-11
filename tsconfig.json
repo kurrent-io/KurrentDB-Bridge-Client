@@ -1,9 +1,10 @@
 {
   "extends": "@tsconfig/node20/tsconfig.json",
   "compilerOptions": {
-    "module": "node16",
+    "module": "Node18",
     "declaration": true,
     "outDir": "lib",
+    "rootDir": "src"
   },
   "exclude": ["lib"]
 }

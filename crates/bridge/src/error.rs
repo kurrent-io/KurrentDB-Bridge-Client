@@ -1,4 +1,5 @@
-use kurrentdb::Endpoint;
+use std::string::ParseError;
+use eventstore::{Endpoint};
 use neon::{object::Object, prelude::Context, prelude::JsError, result::JsResult};
 
 #[derive(Debug)]
@@ -12,21 +13,21 @@ pub enum ErrorKind {
     UnknownError(String),
 }
 
-impl From<kurrentdb::Error> for ErrorKind {
-    fn from(err: kurrentdb::Error) -> Self {
+impl From<eventstore::Error> for ErrorKind {
+    fn from(err: eventstore::Error) -> Self {
         match err {
-            kurrentdb::Error::GrpcConnectionError(_) => ErrorKind::UnavailableError,
-            kurrentdb::Error::ResourceNotFound => ErrorKind::StreamNotFoundError,
-            kurrentdb::Error::ResourceDeleted => ErrorKind::StreamDeletedError,
-            kurrentdb::Error::AccessDenied => ErrorKind::AccessDeniedError,
-            kurrentdb::Error::NotLeaderException(endpoint) => ErrorKind::NotLeaderError(endpoint),
+            eventstore::Error::GrpcConnectionError(_) => ErrorKind::UnavailableError,
+            eventstore::Error::ResourceNotFound => ErrorKind::StreamNotFoundError,
+            eventstore::Error::ResourceDeleted => ErrorKind::StreamDeletedError,
+            eventstore::Error::AccessDenied => ErrorKind::AccessDeniedError,
+            eventstore::Error::NotLeaderException(endpoint) => ErrorKind::NotLeaderError(endpoint),
             _ => ErrorKind::UnknownError(err.to_string()),
         }
     }
 }
 
-impl From<kurrentdb::ClientSettingsParseError> for ErrorKind {
-    fn from(_: kurrentdb::ClientSettingsParseError) -> Self {
+impl From<eventstore::ClientSettingsParseError> for ErrorKind {
+    fn from(_: eventstore::ClientSettingsParseError) -> Self {
         ErrorKind::ParseError
     }
 }
