@@ -22,8 +22,7 @@ After building, you can explore its exports at the Node console:
 $ npm i
 $ npm run build
 $ node
-> require('.').greeting()
-{ message: 'hello node' }
+> var client = require('.').createClient("kurrentdb://admin:changeit@localhost:8080?tls=false")
 ```
 
 ## Available Scripts
