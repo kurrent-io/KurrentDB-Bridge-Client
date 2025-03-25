@@ -5,7 +5,7 @@ use neon::prelude::*;
 
 use crate::error::create_js_error;
 use crate::RUNTIME;
-use eventstore::{
+use kurrentdb::{
     Client, ClientSettings, Credentials, Position, ReadAllOptions, ReadStream, ReadStreamOptions,
     RecordedEvent, ResolvedEvent, StreamPosition,
 };
@@ -312,7 +312,7 @@ fn js_resolve_event(event: &ResolvedEvent) -> JsResolvedEvent {
 
 fn js_recorded_event(event: &RecordedEvent) -> JsRecordedEvent {
     JsRecordedEvent {
-        stream_id: event.stream_id.as_str(),
+        stream_id: event.stream_id(),
         id: event.id,
         r#type: event.event_type.as_str(),
         is_json: event.is_json,

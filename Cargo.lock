@@ -219,7 +219,7 @@ name = "bridge"
 version = "0.1.0"
 dependencies = [
  "chrono",
- "eventstore",
+ "kurrentdb",
  "lazy_static",
  "neon",
  "serde",
@@ -366,45 +366,6 @@ checksum = "33d852cb9b869c2a9b3df2f71a3074817f01e1844f839a144f5fcef059a4eb5d"
 dependencies = [
  "libc",
  "windows-sys 0.59.0",
-]
-
-[[package]]
-name = "eventstore"
-version = "4.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "56ebfd86fe91fd06992baf7ef21efb6acf1f17b23f8ea57030147c6e3e060b92"
-dependencies = [
- "async-stream",
- "base64",
- "bitflags",
- "byteorder",
- "bytes",
- "chrono",
- "eventstore-macros",
- "futures",
- "http",
- "hyper",
- "hyper-rustls",
- "hyper-util",
- "nom",
- "prost",
- "prost-types",
- "rand",
- "reqwest",
- "rustls",
- "rustls-native-certs",
- "serde",
- "serde_json",
- "thiserror",
- "tokio",
- "tokio-rustls",
- "tonic",
- "tonic-build",
- "tower 0.5.2",
- "tracing",
- "url",
- "urlencoding",
- "uuid",
 ]
 
 [[package]]
@@ -970,6 +931,46 @@ checksum = "1cfaf33c695fc6e08064efbc1f72ec937429614f25eef83af942d0e227c3a28f"
 dependencies = [
  "once_cell",
  "wasm-bindgen",
+]
+
+[[package]]
+name = "kurrentdb"
+version = "1.0.0-alpha.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "11f87d1ed2aee0368ea8305c65b54241b6a949d9977bbe9274a86b3fe3680a1f"
+dependencies = [
+ "async-stream",
+ "base64",
+ "bitflags",
+ "byteorder",
+ "bytes",
+ "chrono",
+ "eventstore-macros",
+ "futures",
+ "http",
+ "hyper",
+ "hyper-rustls",
+ "hyper-util",
+ "lazy_static",
+ "nom",
+ "prost",
+ "prost-types",
+ "rand",
+ "reqwest",
+ "rustls",
+ "rustls-native-certs",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "tokio-rustls",
+ "tonic",
+ "tonic-build",
+ "tower 0.5.2",
+ "tracing",
+ "url",
+ "urlencoding",
+ "uuid",
 ]
 
 [[package]]
