@@ -1,6 +1,6 @@
 {
   "name": "@kurrent/darwin-arm64",
-  "description": "Prebuilt binary package for `peerson` on `darwin-arm64`.",
+  "description": "Prebuilt binary package for `@kurrent/bridge` on `darwin-arm64`.",
   "version": "1.0.0-alpha.2",
   "os": [
     "darwin"
