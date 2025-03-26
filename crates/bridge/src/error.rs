@@ -37,9 +37,12 @@ where
     E: Into<ErrorKind> + std::fmt::Display,
 {
     let kind = ErrorKind::from(error.into());
-    let error_name = format!("{:?}", kind);
 
-    // todo: there must be a cleaner way to do this? as_ref?
+    let error_message = match &kind {
+        ErrorKind::UnknownError(msg) => msg.clone(),
+        _ => format!("{:?}", kind)
+    };
+
     let type_name = match &kind {
         ErrorKind::UnavailableError => "UnavailableError",
         ErrorKind::StreamNotFoundError => "StreamNotFoundError",
@@ -50,7 +53,7 @@ where
         ErrorKind::UnknownError(_) => "UnknownError"
     };
 
-    let error = JsError::error(cx, &error_name)?;
+    let error = JsError::error(cx, &error_message)?;
     let name = cx.string(type_name);
     error.set(cx, "name", name)?;
 
@@ -63,6 +66,10 @@ where
 
             metadata.set(cx, "leader-endpoint-host", host)?;
             metadata.set(cx, "leader-endpoint-port", port)?;
+        }
+        ErrorKind::UnknownError(msg) => {
+            let detail = cx.string(msg);
+            metadata.set(cx, "detail", detail)?;
         }
         _ => {}
     }

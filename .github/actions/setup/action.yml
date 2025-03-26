@@ -47,7 +47,7 @@ runs:
       run: corepack enable
     - name: Install Dependencies
       shell: bash  
-      run: yarn install --immutable
+      run: npm ci
     - name: Compute Rust Target
       if: ${{ inputs['use-rust'] == 'true' }}
       id: target

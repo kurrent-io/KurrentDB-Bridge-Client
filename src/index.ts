@@ -53,6 +53,25 @@ export type RustReadAllOptions = {
   credentials?: { username: string; password: string };
 };
 
+export const STREAM_NAME = "streamName";
+export const EVENT_TYPE = "eventType";
+
+export type FilterOn =
+  | typeof EVENT_TYPE
+  | typeof STREAM_NAME;
+
+export type RustReadAllFilterBase = {
+  filterOn: FilterOn;
+};
+
+export interface RegexFilter extends RustReadAllFilterBase {
+  regex: string;
+}
+
+export interface PrefixesFilter extends RustReadAllFilterBase {
+  prefixes: string[];
+}
+
 export type ResolvedEvent = {
   event?: RecordedEvent;
   link?: RecordedEvent;

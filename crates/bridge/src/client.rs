@@ -155,19 +155,19 @@ pub fn read_all(client: Client, mut cx: FunctionContext) -> JsResult<JsPromise> 
         cx.empty_object()
     };
 
-    let options = ReadAllOptions::default();
+    let mut options = ReadAllOptions::default();
 
     let direction_str = match params.get_opt::<JsString, _, _>(&mut cx, "direction")? {
         Some(s) => s.value(&mut cx),
         None => "forwards".to_string(),
     };
-    let options = match direction_str.as_str() {
+    options = match direction_str.as_str() {
         "forwards" => options.forwards(),
         "backwards" => options.backwards(),
         x => cx.throw_error(format!("invalid direction value: '{}'", x))?,
     };
 
-    let options = if let Some(value) = params.get_opt::<JsValue, _, _>(&mut cx, "fromPosition")? {
+    options = if let Some(value) = params.get_opt::<JsValue, _, _>(&mut cx, "fromPosition")? {
         if let Ok(s) = value.downcast::<JsString, _>(&mut cx) {
             match s.value(&mut cx).as_str() {
                 "start" => options.position(StreamPosition::Start),
@@ -199,7 +199,7 @@ pub fn read_all(client: Client, mut cx: FunctionContext) -> JsResult<JsPromise> 
         options.position(StreamPosition::Start)
     };
 
-    let options = if let Some(obj) = params.get_opt::<JsObject, _, _>(&mut cx, "credentials")? {
+    options = if let Some(obj) = params.get_opt::<JsObject, _, _>(&mut cx, "credentials")? {
         let login = obj
             .get::<JsString, _, _>(&mut cx, "username")?
             .value(&mut cx);
@@ -211,7 +211,7 @@ pub fn read_all(client: Client, mut cx: FunctionContext) -> JsResult<JsPromise> 
         options
     };
 
-    let options = if let Some(js_bigint) = params.get_opt::<JsBigInt, _, _>(&mut cx, "maxCount")? {
+    options = if let Some(js_bigint) = params.get_opt::<JsBigInt, _, _>(&mut cx, "maxCount")? {
         match js_bigint.to_u64(&mut cx) {
             Ok(r) => options.max_count(r as usize),
             Err(e) => return cx.throw_error(e.to_string()),
@@ -224,17 +224,46 @@ pub fn read_all(client: Client, mut cx: FunctionContext) -> JsResult<JsPromise> 
         .get_opt::<JsBoolean, _, _>(&mut cx, "requiresLeader")?
         .map(|b| b.value(&mut cx))
         .unwrap_or(false);
-    let options = options.requires_leader(require_leader);
+    options = options.requires_leader(require_leader);
 
     let resolve_links = params
         .get_opt::<JsBoolean, _, _>(&mut cx, "resolvesLink")?
         .map(|b| b.value(&mut cx))
         .unwrap_or(false);
-    let options = if resolve_links {
+    options = if resolve_links {
         options.resolve_link_tos()
     } else {
         options
     };
+
+    if let Some(filter_obj) = params.get_opt::<JsObject, _, _>(&mut cx, "filter")? {
+        let filter_on = filter_obj
+            .get_opt::<JsString, _, _>(&mut cx, "filterOn")?
+            .map(|s| s.value(&mut cx))
+            .unwrap_or_else(|| "".to_string());
+
+        let mut subscription_filter = match filter_on.as_str() {
+            "streamName" => kurrentdb::SubscriptionFilter::on_stream_name(),
+            "eventType" => kurrentdb::SubscriptionFilter::on_event_type(),
+            _ => cx.throw_error("filter.filterOn must be 'streamName' or 'eventType'")?,
+        };
+
+        if let Some(prefixes_array) = filter_obj.get_opt::<JsArray, _, _>(&mut cx, "prefixes")? {
+            let prefixes_len = prefixes_array.len(&mut cx);
+            for i in 0..prefixes_len {
+                let prefix = prefixes_array
+                    .get::<JsString, _, _>(&mut cx, i)?
+                    .value(&mut cx);
+                subscription_filter = subscription_filter.add_prefix(&prefix);
+            }
+        }
+
+        if let Some(regex) = filter_obj.get_opt::<JsString, _, _>(&mut cx, "regex")? {
+            subscription_filter = subscription_filter.regex(&regex.value(&mut cx));
+        }
+
+        options = options.filter(subscription_filter);
+    }
 
     read_internal(client, Options::All(options), cx)
 }

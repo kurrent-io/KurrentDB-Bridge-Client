@@ -86,7 +86,7 @@ jobs:
         run: |
           git config --global user.name $ACTIONS_USER
           git config --global user.email $ACTIONS_EMAIL
-          yarn version --new-version "${{ (inputs.version == 'custom' && inputs.custom) || inputs.version }}" --message "v%s"
+          npm version -m 'v%s' '${{ (inputs.version == 'custom' && inputs.custom) || inputs.version }}'
           git push --follow-tags
           echo tag=$(git describe --abbrev=0) | tee -a $GITHUB_OUTPUT
 
