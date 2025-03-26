@@ -51,6 +51,7 @@ export type RustReadAllOptions = {
   requiresLeader: boolean;
   resolvesLink: boolean;
   credentials?: { username: string; password: string };
+  filter?: Filter;
 };
 
 export const STREAM_NAME = "streamName";
@@ -63,6 +64,8 @@ export type FilterOn =
 export type RustReadAllFilterBase = {
   filterOn: FilterOn;
 };
+
+export type Filter = RegexFilter | PrefixesFilter;
 
 export interface RegexFilter extends RustReadAllFilterBase {
   regex: string;

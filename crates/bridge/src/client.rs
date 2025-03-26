@@ -259,7 +259,7 @@ pub fn read_all(client: Client, mut cx: FunctionContext) -> JsResult<JsPromise> 
         }
 
         if let Some(regex) = filter_obj.get_opt::<JsString, _, _>(&mut cx, "regex")? {
-            subscription_filter = subscription_filter.regex(&regex.value(&mut cx));
+            subscription_filter = subscription_filter.regex(regex.value(&mut cx));
         }
 
         options = options.filter(subscription_filter);
