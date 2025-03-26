@@ -1,6 +1,6 @@
 {
-  "name": "@kurrent/darwin-x64",
-  "description": "Prebuilt binary package for @kurrent/bridge on `darwin-x64`.",
+  "name": "@kurrent/bridge-darwin-x64",
+  "description": "Prebuilt binary package for `@kurrent/bridge` on `darwin-x64`.",
   "version": "1.0.0-alpha.3",
   "os": [
     "darwin"

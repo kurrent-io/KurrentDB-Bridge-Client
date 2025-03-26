@@ -1,3 +1,3 @@
-# `@kurrent/linux-arm64-gnu`
+# `@kurrent/bridge-linux-arm64-gnu`
 
-Prebuilt binary package for @kurrent/bridge on `linux-arm64-gnu`.
+Prebuilt binary package for `@kurrent/bridge` on `linux-arm64-gnu`.

@@ -24,7 +24,7 @@ pub fn create(mut cx: FunctionContext) -> JsResult<JsObject> {
     let setts = match conn_string.parse::<ClientSettings>() {
         Err(e) => {
             let js_error = create_js_error(&mut cx, e)?;
-            cx.throw(js_error)?
+            return cx.throw(js_error)
         }
         Ok(s) => s,
     };

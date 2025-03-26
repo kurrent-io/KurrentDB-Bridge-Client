@@ -1,3 +1,3 @@
-# `@kurrent/darwin-arm64`
+# `@kurrent/bridge-darwin-arm64`
 
-Prebuilt binary package for @kurrent/bridge on `darwin-arm64`.
+Prebuilt binary package for `@kurrent/bridge` on `darwin-arm64`.

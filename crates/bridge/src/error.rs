@@ -6,9 +6,9 @@ pub enum ErrorKind {
     UnavailableError,
     StreamNotFoundError,
     StreamDeletedError,
-    ParseError,
-    NotLeaderError(Endpoint),
     AccessDeniedError,
+    ParseError(String),
+    NotLeaderError(Endpoint),
     UnknownError(String),
 }
 
@@ -26,8 +26,8 @@ impl From<kurrentdb::Error> for ErrorKind {
 }
 
 impl From<kurrentdb::ClientSettingsParseError> for ErrorKind {
-    fn from(_: kurrentdb::ClientSettingsParseError) -> Self {
-        ErrorKind::ParseError
+    fn from(err: kurrentdb::ClientSettingsParseError) -> Self {
+        ErrorKind::ParseError(err.message().to_string())
     }
 }
 
@@ -38,19 +38,14 @@ where
 {
     let kind = ErrorKind::from(error.into());
 
-    let error_message = match &kind {
-        ErrorKind::UnknownError(msg) => msg.clone(),
-        _ => format!("{:?}", kind)
-    };
-
-    let type_name = match &kind {
-        ErrorKind::UnavailableError => "UnavailableError",
-        ErrorKind::StreamNotFoundError => "StreamNotFoundError",
-        ErrorKind::StreamDeletedError => "StreamDeletedError",
-        ErrorKind::ParseError => "ParseError",
-        ErrorKind::AccessDeniedError => "AccessDeniedError",
-        ErrorKind::NotLeaderError(_) => "NotLeaderError",
-        ErrorKind::UnknownError(_) => "UnknownError"
+    let (type_name, error_message) = match &kind {
+        ErrorKind::UnavailableError => ("UnavailableError", format!("{:?}", kind)),
+        ErrorKind::StreamNotFoundError => ("StreamNotFoundError", format!("{:?}", kind)),
+        ErrorKind::StreamDeletedError => ("StreamDeletedError", format!("{:?}", kind)),
+        ErrorKind::ParseError(msg) => ("ParseError", msg.clone()),
+        ErrorKind::AccessDeniedError => ("AccessDeniedError", format!("{:?}", kind)),
+        ErrorKind::NotLeaderError(_) => ("NotLeaderError", format!("{:?}", kind)),
+        ErrorKind::UnknownError(msg) => ("UnknownError", msg.clone())
     };
 
     let error = JsError::error(cx, &error_message)?;
