@@ -935,9 +935,9 @@ dependencies = [
 
 [[package]]
 name = "kurrentdb"
-version = "1.0.0-alpha.2"
+version = "1.0.0-alpha.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "11f87d1ed2aee0368ea8305c65b54241b6a949d9977bbe9274a86b3fe3680a1f"
+checksum = "98c3848145058bc9f1d253a762e75293e07b6132c677591c8635d6f20bd9707f"
 dependencies = [
  "async-stream",
  "base64",
