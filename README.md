@@ -1,103 +1,37 @@
+<a href="https://kurrent.io">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="KurrentLogo-White.png">
+    <source media="(prefers-color-scheme: light)" srcset="KurrentLogo-Black.png">
+    <img alt="Kurrent" src="KurrentLogo-Plum.png" height="50%" width="50%">
+  </picture>
+</a>
+
 # @kurrent/bridge
 
-This project was bootstrapped by [create-neon](https://www.npmjs.com/package/create-neon).
+[![Test](https://github.com/EventStore/kurrentdb-bridge-client/actions/workflows/test.yml/badge.svg)](https://github.com/EventStore/EventStore-Streaming/actions/workflows/build-surge.yml)
 
-## Building
 
-Building requires a [supported version of Node and Rust](https://github.com/neon-bindings/neon#platform-support).
+## Overview
 
-To run the build, run:
+The library improves the performance of the [KurrentDB NodeJS client](https://github.com/EventStore/KurrentDB-Client-NodeJS) by
+integrating the Rust implementation through native addons. It uses
+[Neon](https://github.com/neon-bindings/neon) to create bindings and leverages
+Rust's high-performance characteristics within the Node.js ecosystem.
 
-```sh
-$ npm run build
-```
+## Contributing
 
-This command uses the [@neon-rs/cli](https://www.npmjs.com/package/@neon-rs/cli) utility to assemble the binary Node addon from the output of `cargo`.
+Contributions are welcome! Please read the [contribution guidelines](CONTRIBUTING.md) for more information on how to get started.
 
-## Exploring
+## Support
 
-After building, you can explore its exports at the Node console:
+Information on support can be found on our website: [Kurrent Support](https://kurrent.io/support/)
 
-```sh
-$ npm i
-$ npm run build
-$ node
-> var client = require('.').createClient("kurrentdb://admin:changeit@localhost:8080?tls=false")
-```
+## Communities
 
-## Available Scripts
+- [Discuss](https://discuss.kurrent.io/)
+- [Discord (Kurrent)](https://discord.gg/Phn9pmCw3t)
+- [Discord (ddd-cqrs-es)](https://discord.com/invite/sEZGSHNNbH)
 
-In the project directory, you can run:
+## Licensing
 
-#### `npm run build`
-
-Builds the Node addon (`index.node`) from source, generating a release build with `cargo --release`.
-
-Additional [`cargo build`](https://doc.rust-lang.org/cargo/commands/cargo-build.html) arguments may be passed to `npm run build` and similar commands. For example, to enable a [cargo feature](https://doc.rust-lang.org/cargo/reference/features.html):
-
-```
-npm run build -- --feature=beetle
-```
-
-#### `npm run debug`
-
-Similar to `npm run build` but generates a debug build with `cargo`.
-
-#### `npm run cross`
-
-Similar to `npm run build` but uses [cross-rs](https://github.com/cross-rs/cross) to cross-compile for another platform. Use the [`CARGO_BUILD_TARGET`](https://doc.rust-lang.org/cargo/reference/config.html#buildtarget) environment variable to select the build target.
-
-#### `npm run release`
-
-Initiate a full build and publication of a new patch release of this library via GitHub Actions.
-
-#### `npm run dryrun`
-
-Initiate a dry run of a patch release of this library via GitHub Actions. This performs a full build but does not publish the final result.
-
-#### `npm test`
-
-Runs the unit tests by calling `cargo test`. You can learn more about [adding tests to your Rust code](https://doc.rust-lang.org/book/ch11-01-writing-tests.html) from the [Rust book](https://doc.rust-lang.org/book/).
-
-## Project Layout
-
-The directory structure of this project is:
-
-```
-kurrentdb-bridge-client/
-├── Cargo.toml
-├── README.md
-├── lib/
-├── src/
-|   ├── index.mts
-|   └── index.cts
-├── crates/
-|   └── bridge/
-|       └── src/
-|           └── lib.rs
-├── platforms/
-├── package.json
-└── target/
-```
-
-| Entry          | Purpose                                                                                                                                  |
-|----------------|------------------------------------------------------------------------------------------------------------------------------------------|
-| `Cargo.toml`   | The Cargo [manifest file](https://doc.rust-lang.org/cargo/reference/manifest.html), which informs the `cargo` command.                   |
-| `README.md`    | This file.                                                                                                                               |
-| `lib/`         | The directory containing the generated output from [tsc](https://typescriptlang.org).                                                    |
-| `src/`         | The directory containing the TypeScript source files.                                                                                    |
-| `index.mts`    | Entry point for when this library is loaded via [ESM `import`](https://nodejs.org/api/esm.html#modules-ecmascript-modules) syntax.       |
-| `index.cts`    | Entry point for when this library is loaded via [CJS `require`](https://nodejs.org/api/modules.html#requireid).                          |
-| `crates/`      | The directory tree containing the Rust source code for the project.                                                                      |
-| `lib.rs`       | Entry point for the Rust source code.                                                                                                          |
-| `platforms/`   | The directory containing distributions of the binary addon backend for each platform supported by this library.                          |
-| `package.json` | The npm [manifest file](https://docs.npmjs.com/cli/v7/configuring-npm/package-json), which informs the `npm` command.                    |
-| `target/`      | Binary artifacts generated by the Rust build.                                                                                            |
-
-## Learn More
-
-Learn more about:
-
-- [Neon](https://neon-bindings.com).
-- [Rust](https://www.rust-lang.org).
-- [Node](https://nodejs.org).
+View [Kurrent's licensing information](https://github.com/EventStore/kurrentdb-bridge-client/blob/master/LICENSE.md)
