@@ -1,0 +1,9 @@
+services:
+  esdb:
+    image: docker.eventstore.com/kurrent-latest/kurrentdb:latest
+    ports:
+      - 2113:2113
+    environment:
+      - KURRENTDB_MEM_DB=true
+      - KURRENTDB_INSECURE=true
+      - KURRENTDB_ENABLE_ATOM_PUB_OVER_HTTP=true

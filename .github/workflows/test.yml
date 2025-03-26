@@ -1,0 +1,66 @@
+name: Test
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  # setup:
+  #   name: Setup
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: write
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v4
+  #     - name: Setup Neon Environment
+  #       uses: ./.github/actions/setup
+  #       with:
+  #         use-rust: false
+
+  test:
+    name: Test
+    # needs: setup
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install
+        run: |
+          npm ci
+
+      - name: Build
+        run: |
+          npm run build
+
+      - name: Start Docker Compose
+        run: docker compose up -d
+
+      - name: Wait for services to be ready
+        run: |
+          # Wait for KurrentDB to be available
+          echo "Waiting for KurrentDB to be ready..."
+          timeout=60
+          while ! curl -s http://localhost:2113/health/live > /dev/null; do
+            if [ $timeout -le 0 ]; then
+              echo "Timeout waiting for KurrentDB to start"
+              docker-compose logs
+              exit 1
+            fi
+            timeout=$((timeout-1))
+            sleep 1
+          done
+          echo "KurrentDB is ready!"
+
+      - name: Run Tests
+        run: node --test
+
+      - name: Stop Docker Compose
+        if: always()
+        run: docker compose down

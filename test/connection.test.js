@@ -19,6 +19,10 @@ describe("connection", () => {
     });
   });
 
+  it("Should not throw when creating client with unavailable server", async () => {
+    assert.doesNotThrow(() => addon.createClient("kurrentdb://localhost:1111"));
+  });
+
   it("Should throw ParseError with an invalid connection string", async () => {
     assert.throws(
       () => addon.createClient("unknownprotocol://localhost:2113"),

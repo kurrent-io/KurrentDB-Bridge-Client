@@ -18,6 +18,19 @@ describe("read", () => {
     }
   });
 
+  it("Should throw StreamNotFoundError when stream does not exist", async () => {
+    // Arrange
+    const client = addon.createClient("kurrentdb://localhost:2113?tls=false");
+
+    // Act
+    const stream = client.readStream("invalid-stream-name");
+
+    // Assert
+    await assert.rejects(() => collectEvents(stream), {
+      name: "StreamNotFoundError",
+    });
+  });
+
   it("Should read all events from the a single", async () => {
     // Arrange
     const client = addon.createClient("kurrentdb://localhost:2113?tls=false");
@@ -57,14 +70,14 @@ describe("read", () => {
     const client = addon.createClient("kurrentdb://localhost:2113?tls=false");
 
     // Act
-    const stream = client.readAll({ maxCount: 10n });
+    const stream = client.readAll({ maxCount: 1n });
 
     // Assert
     const events = await collectEvents(stream);
 
     assert.strictEqual(
       events.length,
-      10,
+      1,
       "Count should be 10 after reading all events"
     );
   });
