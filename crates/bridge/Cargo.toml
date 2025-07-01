@@ -17,7 +17,7 @@ neon = "1"
 lazy_static = "1"
 serde_json = "1"
 serde = "1"
-
+eyre = "0.6"
 
 [dependencies.tokio]
 version = "1"
@@ -32,4 +32,4 @@ version = "1"
 features = ["serde", "v4"]
 
 [dependencies.kurrentdb]
-version = "1.0.0-alpha.3"
+version = "1.0.0-alpha.4"

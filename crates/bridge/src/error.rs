@@ -1,5 +1,6 @@
 use kurrentdb::Endpoint;
 use neon::{object::Object, prelude::Context, prelude::JsError, result::JsResult};
+use eyre::Report;
 
 #[derive(Debug)]
 pub enum ErrorKind {
@@ -31,6 +32,20 @@ impl From<kurrentdb::ClientSettingsParseError> for ErrorKind {
     }
 }
 
+impl From<Report> for ErrorKind {
+    fn from(err: Report) -> Self {
+        if let Some(kdb_err) = err.downcast_ref::<kurrentdb::Error>() {
+            return ErrorKind::from(kdb_err.clone());
+        }
+
+        if let Some(parse_err) = err.downcast_ref::<kurrentdb::ClientSettingsParseError>() {
+            return ErrorKind::from(parse_err.clone());
+        }
+
+        ErrorKind::UnknownError(err.to_string())
+    }
+}
+
 pub fn create_js_error<'a, C, E>(cx: &mut C, error: E) -> JsResult<'a, JsError>
 where
     C: Context<'a>,
@@ -45,7 +60,7 @@ where
         ErrorKind::ParseError(msg) => ("ParseError", msg.clone()),
         ErrorKind::AccessDeniedError => ("AccessDeniedError", format!("{:?}", kind)),
         ErrorKind::NotLeaderError(_) => ("NotLeaderError", format!("{:?}", kind)),
-        ErrorKind::UnknownError(msg) => ("UnknownError", msg.clone())
+        ErrorKind::UnknownError(msg) => ("UnknownError", msg.clone()),
     };
 
     let error = JsError::error(cx, &error_message)?;
