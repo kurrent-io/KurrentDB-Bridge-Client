@@ -40,7 +40,11 @@
     "type": "library",
     "org": "@kurrent",
     "prefix": "bridge-",
-    "platforms": "common",
+    "platforms": [
+      "common",
+      "linux-arm64-musl",
+      "linux-x64-musl"
+    ],
     "load": "./src/load.ts"
   },
   "devDependencies": {
@@ -51,5 +55,14 @@
   },
   "dependencies": {
     "@neon-rs/load": "^0.1.82"
+  },
+  "optionalDependencies": {
+    "@kurrent/bridge-win32-x64-msvc": "0.1.2",
+    "@kurrent/bridge-darwin-x64": "0.1.2",
+    "@kurrent/bridge-darwin-arm64": "0.1.2",
+    "@kurrent/bridge-linux-x64-gnu": "0.1.2",
+    "@kurrent/bridge-linux-arm64-gnu": "0.1.2",
+    "@kurrent/bridge-linux-arm64-musl": "0.1.2",
+    "@kurrent/bridge-linux-x64-musl": "0.1.2"
   }
 }
