@@ -20,6 +20,6 @@
     "arch": "arm64",
     "abi": "musl"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Kurrent, Inc",
+  "license": "MIT"
 }

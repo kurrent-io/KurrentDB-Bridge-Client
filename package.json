@@ -40,7 +40,11 @@
     "type": "library",
     "org": "@kurrent",
     "prefix": "bridge-",
-    "platforms": "common",
+    "platforms": [
+      "common",
+      "linux-arm64-musl",
+      "linux-x64-musl"
+    ],
     "load": "./src/load.ts"
   },
   "devDependencies": {
