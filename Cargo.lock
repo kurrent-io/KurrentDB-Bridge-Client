@@ -217,6 +217,7 @@ name = "bridge"
 version = "0.1.0"
 dependencies = [
  "chrono",
+ "eyre",
  "kurrentdb",
  "lazy_static",
  "neon",
