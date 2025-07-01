@@ -8,10 +8,13 @@
 module.exports = require('@neon-rs/load').proxy({
   platforms: {
     'win32-x64-msvc': () => require('@kurrent/bridge-win32-x64-msvc'),
+    'win32-arm64-msvc': () => require('@kurrent/bridge-win32-arm64-msvc'),
     'darwin-x64': () => require('@kurrent/bridge-darwin-x64'),
     'darwin-arm64': () => require('@kurrent/bridge-darwin-arm64'),
     'linux-x64-gnu': () => require('@kurrent/bridge-linux-x64-gnu'),
-    'linux-arm64-gnu': () => require('@kurrent/bridge-linux-arm64-gnu')
+    'linux-arm64-gnu': () => require('@kurrent/bridge-linux-arm64-gnu'),
+    'linux-x64-musl': () => require('@kurrent/bridge-linux-x64-musl'),
+    'linux-arm64-musl': () => require('@kurrent/bridge-linux-arm64-musl')
   },
   debug: () => require('../index.node')
 });

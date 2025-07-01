@@ -32,4 +32,4 @@ version = "1"
 features = ["serde", "v4"]
 
 [dependencies.kurrentdb]
-version = "1.0.0-alpha.3"
+version = "1.0.0-alpha.4"
