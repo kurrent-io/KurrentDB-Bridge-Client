@@ -10,9 +10,6 @@ exclude = ["index.node"]
 [lib]
 crate-type = ["cdylib"]
 
-[build]
-rustflags = ["-C", "target-feature=-crt-static"]
-
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]

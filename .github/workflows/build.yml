@@ -96,6 +96,7 @@ jobs:
         env:
           CARGO_BUILD_TARGET: ${{ steps.neon.outputs.target }}
           NEON_BUILD_PLATFORM: ${{ matrix.cfg.platform }}
+          RUSTFLAGS: "-C target-feature=-crt-static"
         run: npm run ${{ matrix.cfg.script }}
       - name: Pack
         id: pack
