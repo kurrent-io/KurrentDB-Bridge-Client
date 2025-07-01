@@ -1,0 +1,25 @@
+{
+  "name": "@kurrent/bridge-linux-arm64-musl",
+  "description": "Prebuilt binary package for `@kurrent/bridge` on `linux-arm64-musl`.",
+  "version": "0.1.2",
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "arm64"
+  ],
+  "main": "index.node",
+  "files": [
+    "index.node"
+  ],
+  "neon": {
+    "type": "binary",
+    "rust": "aarch64-unknown-linux-musl",
+    "node": "linux-arm64-musl",
+    "os": "linux",
+    "arch": "arm64",
+    "abi": "musl"
+  },
+  "author": "",
+  "license": "ISC"
+}
