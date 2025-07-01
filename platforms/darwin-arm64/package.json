@@ -1,7 +1,7 @@
 {
   "name": "@kurrent/bridge-darwin-arm64",
   "description": "Prebuilt binary package for `@kurrent/bridge` on `darwin-arm64`.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "os": [
     "darwin"
   ],
