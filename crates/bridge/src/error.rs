@@ -8,6 +8,7 @@ pub enum ErrorKind {
     StreamNotFoundError,
     StreamDeletedError,
     AccessDeniedError,
+    DeadlineExceededError,
     ParseError(String),
     NotLeaderError(Endpoint),
     UnknownError(String),
@@ -17,10 +18,13 @@ impl From<kurrentdb::Error> for ErrorKind {
     fn from(err: kurrentdb::Error) -> Self {
         match err {
             kurrentdb::Error::GrpcConnectionError(_) => ErrorKind::UnavailableError,
+            kurrentdb::Error::ServerError(_) => ErrorKind::UnavailableError,
+            kurrentdb::Error::ConnectionClosed => ErrorKind::UnavailableError,
             kurrentdb::Error::ResourceNotFound => ErrorKind::StreamNotFoundError,
             kurrentdb::Error::ResourceDeleted => ErrorKind::StreamDeletedError,
             kurrentdb::Error::AccessDenied => ErrorKind::AccessDeniedError,
             kurrentdb::Error::NotLeaderException(endpoint) => ErrorKind::NotLeaderError(endpoint),
+            kurrentdb::Error::DeadlineExceeded => ErrorKind::DeadlineExceededError,
             _ => ErrorKind::UnknownError(err.to_string()),
         }
     }
@@ -59,6 +63,7 @@ where
         ErrorKind::StreamDeletedError => ("StreamDeletedError", format!("{:?}", kind)),
         ErrorKind::ParseError(msg) => ("ParseError", msg.clone()),
         ErrorKind::AccessDeniedError => ("AccessDeniedError", format!("{:?}", kind)),
+        ErrorKind::DeadlineExceededError => ("DeadlineExceededError", format!("{:?}", kind)),
         ErrorKind::NotLeaderError(_) => ("NotLeaderError", format!("{:?}", kind)),
         ErrorKind::UnknownError(msg) => ("UnknownError", msg.clone()),
     };
