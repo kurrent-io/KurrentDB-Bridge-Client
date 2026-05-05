@@ -1,7 +1,7 @@
 {
   "name": "@kurrent/bridge-linux-x64-musl",
   "description": "Prebuilt binary package for `@kurrent/bridge` on `linux-x64-musl`.",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "os": [
     "linux"
   ],
