@@ -35,13 +35,17 @@ export type RawClient = {
 
 export type RawReadStream = unknown;
 
+export type BasicCredentials = { username: string; password: string };
+export type BearerCredentials = { bearerToken: string };
+export type Credentials = BasicCredentials | BearerCredentials;
+
 export type RustReadStreamOptions = {
   fromRevision: bigint | string;
   direction: string;
   maxCount: bigint;
   requiresLeader: boolean;
   resolvesLink: boolean;
-  credentials?: { username: string; password: string };
+  credentials?: Credentials;
 };
 
 export type RustReadAllOptions = {
@@ -50,7 +54,7 @@ export type RustReadAllOptions = {
   maxCount: bigint;
   requiresLeader: boolean;
   resolvesLink: boolean;
-  credentials?: { username: string; password: string };
+  credentials?: Credentials;
   filter?: Filter;
 };
 

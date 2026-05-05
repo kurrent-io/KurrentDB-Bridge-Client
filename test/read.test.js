@@ -81,4 +81,71 @@ describe("read", () => {
       "Count should be 10 after reading all events"
     );
   });
+
+  it("Should read with basic credentials", async () => {
+    // Arrange
+    const client = addon.createClient("kurrentdb://localhost:2113?tls=false");
+
+    // Act
+    const stream = client.readStream(streamName, {
+      credentials: { username: "admin", password: "changeit" },
+    });
+
+    // Assert
+    const events = await collectEvents(stream);
+
+    assert.strictEqual(events.length, 4);
+  });
+
+  it("Should read with bearer-token credentials", async () => {
+    const client = addon.createClient("kurrentdb://localhost:2113?tls=false");
+
+    const stream = client.readStream(streamName, {
+      credentials: { bearerToken: "test-bearer-token" },
+    });
+
+    const events = await collectEvents(stream);
+
+    assert.strictEqual(events.length, 4);
+  });
+
+  it("Should read $all with bearer-token credentials", async () => {
+    const client = addon.createClient("kurrentdb://localhost:2113?tls=false");
+
+    const stream = client.readAll({
+      maxCount: 1n,
+      credentials: { bearerToken: "test-bearer-token" },
+    });
+
+    const events = await collectEvents(stream);
+
+    assert.strictEqual(events.length, 1);
+  });
+
+  it("Should throw TypeError when bearerToken is not a string", async () => {
+    const client = addon.createClient("kurrentdb://localhost:2113?tls=false");
+
+    const stream = client.readStream(streamName, {
+      credentials: { bearerToken: 123 },
+    });
+
+    await assert.rejects(() => collectEvents(stream), {
+      name: "TypeError",
+      message: "credentials.bearerToken must be a string",
+    });
+  });
+
+  it("Should throw TypeError when credentials shape is invalid", async () => {
+    const client = addon.createClient("kurrentdb://localhost:2113?tls=false");
+
+    const stream = client.readStream(streamName, {
+      credentials: { username: "admin" },
+    });
+
+    await assert.rejects(() => collectEvents(stream), {
+      name: "TypeError",
+      message:
+        "credentials must include either { bearerToken } or { username, password }",
+    });
+  });
 });
