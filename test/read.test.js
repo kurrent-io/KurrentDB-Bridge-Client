@@ -98,10 +98,6 @@ describe("read", () => {
   });
 
   it("Should read with bearer-token credentials", async () => {
-    // The credential shape lives entirely on the JS side. The bridge picks the
-    // Bearer branch and the Rust client emits `Authorization: Bearer ...`. The
-    // test server runs in insecure mode and ignores the header, so success
-    // here proves the JS->Rust plumbing carries bearer tokens without error.
     const client = addon.createClient("kurrentdb://localhost:2113?tls=false");
 
     const stream = client.readStream(streamName, {
