@@ -6,8 +6,8 @@ use neon::prelude::*;
 use crate::error::create_js_error;
 use crate::RUNTIME;
 use kurrentdb::{
-    Client, ClientSettings, Credentials, Position, ReadAllOptions, ReadStream, ReadStreamOptions,
-    RecordedEvent, ResolvedEvent, StreamPosition,
+    Authentication, Client, ClientSettings, Position, ReadAllOptions, ReadStream,
+    ReadStreamOptions, RecordedEvent, ResolvedEvent, StreamPosition,
 };
 use neon::{
     prelude::FunctionContext,
@@ -61,6 +61,19 @@ pub enum Options {
     All(ReadAllOptions),
 }
 
+fn authentication_from_js<'a>(
+    cx: &mut FunctionContext<'a>,
+    obj: Handle<'a, JsObject>,
+) -> NeonResult<Authentication> {
+    if let Some(token) = obj.get_opt::<JsString, _, _>(cx, "bearerToken")? {
+        return Ok(Authentication::bearer(token.value(cx)));
+    }
+
+    let login = obj.get::<JsString, _, _>(cx, "username")?.value(cx);
+    let password = obj.get::<JsString, _, _>(cx, "password")?.value(cx);
+    Ok(Authentication::basic(login, password))
+}
+
 pub fn read_stream(client: Client, mut cx: FunctionContext) -> JsResult<JsPromise> {
     let stream_name = cx.argument::<JsString>(0)?.value(&mut cx);
     let params = if cx.len() >= 2 {
@@ -103,13 +116,7 @@ pub fn read_stream(client: Client, mut cx: FunctionContext) -> JsResult<JsPromis
     }
 
     if let Some(obj) = params.get_opt::<JsObject, _, _>(&mut cx, "credentials")? {
-        let login = obj
-            .get::<JsString, _, _>(&mut cx, "username")?
-            .value(&mut cx);
-        let password = obj
-            .get::<JsString, _, _>(&mut cx, "password")?
-            .value(&mut cx);
-        options = options.authenticated(Credentials::new(login, password));
+        options = options.authenticated(authentication_from_js(&mut cx, obj)?);
     }
 
     if let Some(js_bigint) = params.get_opt::<JsBigInt, _, _>(&mut cx, "maxCount")? {
@@ -200,13 +207,7 @@ pub fn read_all(client: Client, mut cx: FunctionContext) -> JsResult<JsPromise> 
     };
 
     options = if let Some(obj) = params.get_opt::<JsObject, _, _>(&mut cx, "credentials")? {
-        let login = obj
-            .get::<JsString, _, _>(&mut cx, "username")?
-            .value(&mut cx);
-        let password = obj
-            .get::<JsString, _, _>(&mut cx, "password")?
-            .value(&mut cx);
-        options.authenticated(Credentials::new(login, password))
+        options.authenticated(authentication_from_js(&mut cx, obj)?)
     } else {
         options
     };

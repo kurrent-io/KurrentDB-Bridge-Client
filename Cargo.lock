@@ -368,16 +368,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "eventstore-macros"
-version = "0.0.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9555f6f235f8f5eb1a88c2c24b9c29742c1b71423ddf431e3572dd5226e99f38"
-dependencies = [
- "quote",
- "syn 1.0.109",
-]
-
-[[package]]
 name = "eyre"
 version = "0.6.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -934,9 +924,9 @@ dependencies = [
 
 [[package]]
 name = "kurrentdb"
-version = "1.0.0-alpha.4"
+version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b8ca80172a796514d13014d36fd5c9b73f2dbee0391309420276371f2ea2f8af"
+checksum = "b39067ccd6575c67e9e9e050bcb71342b011af2002e448bc6f57972d7f1b9d66"
 dependencies = [
  "async-stream",
  "base64",
@@ -944,13 +934,13 @@ dependencies = [
  "byteorder",
  "bytes",
  "chrono",
- "eventstore-macros",
  "eyre",
  "futures",
  "http",
  "hyper",
  "hyper-rustls",
  "hyper-util",
+ "kurrentdb-macros",
  "lazy_static",
  "nom",
  "prost",
@@ -971,6 +961,16 @@ dependencies = [
  "url",
  "urlencoding",
  "uuid",
+]
+
+[[package]]
+name = "kurrentdb-macros"
+version = "0.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "72884a70f83c9cdc7195bd0aef6fe9df5fa6a9eef4722170c6e90b4cf2b69672"
+dependencies = [
+ "quote",
+ "syn 1.0.109",
 ]
 
 [[package]]

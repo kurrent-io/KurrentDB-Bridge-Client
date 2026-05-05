@@ -81,4 +81,48 @@ describe("read", () => {
       "Count should be 10 after reading all events"
     );
   });
+
+  it("Should read with basic credentials", async () => {
+    // Arrange
+    const client = addon.createClient("kurrentdb://localhost:2113?tls=false");
+
+    // Act
+    const stream = client.readStream(streamName, {
+      credentials: { username: "admin", password: "changeit" },
+    });
+
+    // Assert
+    const events = await collectEvents(stream);
+
+    assert.strictEqual(events.length, 4);
+  });
+
+  it("Should read with bearer-token credentials", async () => {
+    // The credential shape lives entirely on the JS side. The bridge picks the
+    // Bearer branch and the Rust client emits `Authorization: Bearer ...`. The
+    // test server runs in insecure mode and ignores the header, so success
+    // here proves the JS->Rust plumbing carries bearer tokens without error.
+    const client = addon.createClient("kurrentdb://localhost:2113?tls=false");
+
+    const stream = client.readStream(streamName, {
+      credentials: { bearerToken: "test-bearer-token" },
+    });
+
+    const events = await collectEvents(stream);
+
+    assert.strictEqual(events.length, 4);
+  });
+
+  it("Should read $all with bearer-token credentials", async () => {
+    const client = addon.createClient("kurrentdb://localhost:2113?tls=false");
+
+    const stream = client.readAll({
+      maxCount: 1n,
+      credentials: { bearerToken: "test-bearer-token" },
+    });
+
+    const events = await collectEvents(stream);
+
+    assert.strictEqual(events.length, 1);
+  });
 });
