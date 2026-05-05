@@ -1,6 +1,6 @@
 services:
   esdb:
-    image: docker.eventstore.com/kurrent-latest/kurrentdb:latest
+    image: kurrentplatform/kurrentdb:lts
     ports:
       - 2113:2113
     environment:
