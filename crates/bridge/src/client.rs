@@ -65,13 +65,36 @@ fn authentication_from_js<'a>(
     cx: &mut FunctionContext<'a>,
     obj: Handle<'a, JsObject>,
 ) -> NeonResult<Authentication> {
-    if let Some(token) = obj.get_opt::<JsString, _, _>(cx, "bearerToken")? {
-        return Ok(Authentication::bearer(token.value(cx)));
+    let bearer_value = obj.get_value(cx, "bearerToken")?;
+    if !bearer_value.is_a::<JsUndefined, _>(cx) {
+        let token = match bearer_value.downcast::<JsString, _>(cx) {
+            Ok(s) => s.value(cx),
+            Err(_) => {
+                return cx.throw_type_error("credentials.bearerToken must be a string");
+            }
+        };
+        return Ok(Authentication::bearer(token));
     }
 
-    let login = obj.get::<JsString, _, _>(cx, "username")?.value(cx);
-    let password = obj.get::<JsString, _, _>(cx, "password")?.value(cx);
-    Ok(Authentication::basic(login, password))
+    let username = obj
+        .get_value(cx, "username")?
+        .downcast::<JsString, _>(cx)
+        .ok();
+    let password = obj
+        .get_value(cx, "password")?
+        .downcast::<JsString, _>(cx)
+        .ok();
+
+    match (username, password) {
+        (Some(u), Some(p)) => {
+            let login = u.value(cx);
+            let password = p.value(cx);
+            Ok(Authentication::basic(login, password))
+        }
+        _ => cx.throw_type_error(
+            "credentials must include either { bearerToken } or { username, password }",
+        ),
+    }
 }
 
 pub fn read_stream(client: Client, mut cx: FunctionContext) -> JsResult<JsPromise> {

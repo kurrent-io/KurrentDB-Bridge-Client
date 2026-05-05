@@ -125,4 +125,31 @@ describe("read", () => {
 
     assert.strictEqual(events.length, 1);
   });
+
+  it("Should throw TypeError when bearerToken is not a string", async () => {
+    const client = addon.createClient("kurrentdb://localhost:2113?tls=false");
+
+    const stream = client.readStream(streamName, {
+      credentials: { bearerToken: 123 },
+    });
+
+    await assert.rejects(() => collectEvents(stream), {
+      name: "TypeError",
+      message: "credentials.bearerToken must be a string",
+    });
+  });
+
+  it("Should throw TypeError when credentials shape is invalid", async () => {
+    const client = addon.createClient("kurrentdb://localhost:2113?tls=false");
+
+    const stream = client.readStream(streamName, {
+      credentials: { username: "admin" },
+    });
+
+    await assert.rejects(() => collectEvents(stream), {
+      name: "TypeError",
+      message:
+        "credentials must include either { bearerToken } or { username, password }",
+    });
+  });
 });
