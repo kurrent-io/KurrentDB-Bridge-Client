@@ -48,6 +48,30 @@ describe("read", () => {
     );
   });
 
+  it("Should serialize revision and position as lossless strings", async () => {
+    // Arrange
+    const client = addon.createClient("kurrentdb://localhost:2113?tls=false");
+
+    // Act
+    const [resolved] = await collectEvents(client.readStream(streamName));
+
+    // Assert
+    assert.strictEqual(typeof resolved.event.revision, "string");
+    assert.strictEqual(typeof resolved.event.position.commit, "string");
+    assert.strictEqual(typeof resolved.event.position.prepare, "string");
+  });
+
+  it("Should serialize commitPosition as a string when reading $all", async () => {
+    // Arrange
+    const client = addon.createClient("kurrentdb://localhost:2113?tls=false");
+
+    // Act
+    const [resolved] = await collectEvents(client.readAll({ maxCount: 1n }));
+
+    // Assert
+    assert.strictEqual(typeof resolved.commitPosition, "string");
+  });
+
   it("Should read a limited number of events from a single stream", async () => {
     // Arrange
     const client = addon.createClient("kurrentdb://localhost:2113?tls=false");

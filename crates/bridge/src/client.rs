@@ -328,7 +328,7 @@ struct ValueItem<'a> {
 struct JsResolvedEvent<'a> {
     event: Option<JsRecordedEvent<'a>>,
     link: Option<JsRecordedEvent<'a>>,
-    commit_position: Option<u64>,
+    commit_position: Option<String>,
 }
 
 #[derive(Serialize)]
@@ -338,7 +338,7 @@ struct JsRecordedEvent<'a> {
     id: Uuid,
     r#type: &'a str,
     is_json: bool,
-    revision: u64,
+    revision: String,
     created: DateTime<Utc>,
     data: &'a [u8],
     metadata: &'a [u8],
@@ -347,12 +347,12 @@ struct JsRecordedEvent<'a> {
 
 #[derive(Serialize)]
 struct JsPosition {
-    commit: u64,
-    prepare: u64,
+    commit: String,
+    prepare: String,
 }
 
 fn js_resolve_event(event: &ResolvedEvent) -> JsResolvedEvent {
-    let commit_position = event.commit_position;
+    let commit_position = event.commit_position.map(|p| p.to_string());
     let link = event.link.as_ref().map(js_recorded_event);
     let event = event.event.as_ref().map(js_recorded_event);
 
@@ -369,13 +369,13 @@ fn js_recorded_event(event: &RecordedEvent) -> JsRecordedEvent {
         id: event.id,
         r#type: event.event_type.as_str(),
         is_json: event.is_json,
-        revision: event.revision,
+        revision: event.revision.to_string(),
         created: event.created,
         data: &event.data,
         metadata: &event.custom_metadata,
         position: JsPosition {
-            commit: event.position.commit,
-            prepare: event.position.prepare,
+            commit: event.position.commit.to_string(),
+            prepare: event.position.prepare.to_string(),
         },
     }
 }
