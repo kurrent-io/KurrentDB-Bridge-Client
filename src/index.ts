@@ -3,13 +3,14 @@
 // This module is the CJS entry point for the library.
 
 import * as addon from './load.js';
-import { Buffer } from "buffer";
 
 // Use this declaration to assign types to the addon's exports,
 // which otherwise by default are `any`.
 declare module "./load" {
   function createClient(connStr: string): RawClient;
-  function readStreamNext(raw: RawReadStream): Promise<Buffer>;
+  function readStreamNext(
+    raw: RawReadStream
+  ): Promise<{ value: ResolvedEvent[]; done: boolean }>;
 }
 
 
@@ -118,11 +119,7 @@ export function createClient(connStr: string): RustClient {
             iteratorPromise = client.readStream(stream, options);
 
           const iterator = await iteratorPromise;
-          const buffer = await addon.readStreamNext(iterator);
-          return JSON.parse(buffer.toString()) as {
-            value: ResolvedEvent[];
-            done: boolean;
-          };
+          return addon.readStreamNext(iterator);
         },
       };
 
@@ -141,11 +138,7 @@ export function createClient(connStr: string): RustClient {
           if (!iteratorPromise) iteratorPromise = client.readAll(options);
 
           const iterator = await iteratorPromise;
-          const buffer = await addon.readStreamNext(iterator);
-          return JSON.parse(buffer.toString()) as {
-            value: ResolvedEvent[];
-            done: boolean;
-          };
+          return addon.readStreamNext(iterator);
         },
       };
 

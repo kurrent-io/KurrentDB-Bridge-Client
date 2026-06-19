@@ -48,6 +48,33 @@ describe("read", () => {
     );
   });
 
+  it("Should materialize event fields as their JS types", async () => {
+    // Arrange
+    const client = addon.createClient("kurrentdb://localhost:2113?tls=false");
+
+    // Act
+    const [resolved] = await collectEvents(client.readStream(streamName));
+
+    // Assert
+    assert.strictEqual(typeof resolved.event.revision, "bigint");
+    assert.strictEqual(typeof resolved.event.position.commit, "bigint");
+    assert.strictEqual(typeof resolved.event.position.prepare, "bigint");
+    assert.ok(resolved.event.created instanceof Date);
+    assert.ok(Buffer.isBuffer(resolved.event.data));
+    assert.ok(Buffer.isBuffer(resolved.event.metadata));
+  });
+
+  it("Should materialize commitPosition as bigint when reading $all", async () => {
+    // Arrange
+    const client = addon.createClient("kurrentdb://localhost:2113?tls=false");
+
+    // Act
+    const [resolved] = await collectEvents(client.readAll({ maxCount: 1n }));
+
+    // Assert
+    assert.strictEqual(typeof resolved.commitPosition, "bigint");
+  });
+
   it("Should read a limited number of events from a single stream", async () => {
     // Arrange
     const client = addon.createClient("kurrentdb://localhost:2113?tls=false");

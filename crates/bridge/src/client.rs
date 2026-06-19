@@ -1,6 +1,5 @@
 use std::sync::Arc;
 
-use chrono::{DateTime, Utc};
 use neon::prelude::*;
 
 use crate::error::create_js_error;
@@ -12,11 +11,9 @@ use kurrentdb::{
 use neon::{
     prelude::FunctionContext,
     result::JsResult,
-    types::{JsBigInt, JsBoolean, JsFunction, JsObject, JsPromise, JsString, JsValue},
+    types::{JsBigInt, JsBoolean, JsDate, JsFunction, JsObject, JsPromise, JsString, JsValue},
 };
-use serde::Serialize;
 use tokio::sync::{Mutex};
-use uuid::Uuid;
 
 pub fn create(mut cx: FunctionContext) -> JsResult<JsObject> {
     let conn_string = cx.argument::<JsString>(0)?.value(&mut cx);
@@ -317,67 +314,68 @@ fn read_internal(client: Client, options: Options, mut cx: FunctionContext) -> J
     Ok(promise)
 }
 
-#[derive(Serialize)]
-struct ValueItem<'a> {
-    value: Option<Vec<JsResolvedEvent<'a>>>,
-    done: bool,
+fn js_recorded_event<'a, C: Context<'a>>(
+    cx: &mut C,
+    event: &RecordedEvent,
+) -> JsResult<'a, JsObject> {
+    let obj = cx.empty_object();
+
+    let stream_id = cx.string(event.stream_id());
+    obj.set(cx, "streamId", stream_id)?;
+
+    let id = cx.string(event.id.to_string());
+    obj.set(cx, "id", id)?;
+
+    let event_type = cx.string(event.event_type.as_str());
+    obj.set(cx, "type", event_type)?;
+
+    let is_json = cx.boolean(event.is_json);
+    obj.set(cx, "isJson", is_json)?;
+
+    let revision = JsBigInt::from_u64(cx, event.revision);
+    obj.set(cx, "revision", revision)?;
+
+    let created = JsDate::new_lossy(cx, event.created.timestamp_millis() as f64);
+    obj.set(cx, "created", created)?;
+
+    let data = JsBuffer::from_slice(cx, &event.data)?;
+    obj.set(cx, "data", data)?;
+
+    let metadata = JsBuffer::from_slice(cx, &event.custom_metadata)?;
+    obj.set(cx, "metadata", metadata)?;
+
+    let position = cx.empty_object();
+    let commit = JsBigInt::from_u64(cx, event.position.commit);
+    position.set(cx, "commit", commit)?;
+    let prepare = JsBigInt::from_u64(cx, event.position.prepare);
+    position.set(cx, "prepare", prepare)?;
+    obj.set(cx, "position", position)?;
+
+    Ok(obj)
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")]
-struct JsResolvedEvent<'a> {
-    event: Option<JsRecordedEvent<'a>>,
-    link: Option<JsRecordedEvent<'a>>,
-    commit_position: Option<u64>,
-}
+fn js_resolve_event<'a, C: Context<'a>>(
+    cx: &mut C,
+    event: &ResolvedEvent,
+) -> JsResult<'a, JsObject> {
+    let obj = cx.empty_object();
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")]
-struct JsRecordedEvent<'a> {
-    stream_id: &'a str,
-    id: Uuid,
-    r#type: &'a str,
-    is_json: bool,
-    revision: u64,
-    created: DateTime<Utc>,
-    data: &'a [u8],
-    metadata: &'a [u8],
-    position: JsPosition,
-}
-
-#[derive(Serialize)]
-struct JsPosition {
-    commit: u64,
-    prepare: u64,
-}
-
-fn js_resolve_event(event: &ResolvedEvent) -> JsResolvedEvent {
-    let commit_position = event.commit_position;
-    let link = event.link.as_ref().map(js_recorded_event);
-    let event = event.event.as_ref().map(js_recorded_event);
-
-    JsResolvedEvent {
-        event,
-        link,
-        commit_position,
+    if let Some(event) = event.event.as_ref() {
+        let recorded = js_recorded_event(cx, event)?;
+        obj.set(cx, "event", recorded)?;
     }
-}
 
-fn js_recorded_event(event: &RecordedEvent) -> JsRecordedEvent {
-    JsRecordedEvent {
-        stream_id: event.stream_id(),
-        id: event.id,
-        r#type: event.event_type.as_str(),
-        is_json: event.is_json,
-        revision: event.revision,
-        created: event.created,
-        data: &event.data,
-        metadata: &event.custom_metadata,
-        position: JsPosition {
-            commit: event.position.commit,
-            prepare: event.position.prepare,
-        },
+    if let Some(link) = event.link.as_ref() {
+        let recorded = js_recorded_event(cx, link)?;
+        obj.set(cx, "link", recorded)?;
     }
+
+    if let Some(commit_position) = event.commit_position {
+        let commit_position = JsBigInt::from_u64(cx, commit_position);
+        obj.set(cx, "commitPosition", commit_position)?;
+    }
+
+    Ok(obj)
 }
 
 pub fn read_stream_next_mutex(mut cx: FunctionContext) -> JsResult<JsPromise> {
@@ -417,24 +415,27 @@ pub fn read_stream_next_mutex(mut cx: FunctionContext) -> JsResult<JsPromise> {
                 cx.throw(js_error)
             }
             Ok(events) => {
-                let result = match events {
+                let result = cx.empty_object();
+
+                match events {
                     Some(events) => {
-                        let js = events.iter().map(js_resolve_event).collect::<Vec<_>>();
-                        serde_json::to_vec(&ValueItem {
-                            value: Some(js),
-                            done: false,
-                        })
-                        .unwrap()
+                        let array = JsArray::new(&mut cx, events.len());
+                        for (index, event) in events.iter().enumerate() {
+                            let resolved = js_resolve_event(&mut cx, event)?;
+                            array.set(&mut cx, index as u32, resolved)?;
+                        }
+                        result.set(&mut cx, "value", array)?;
+                        let done = cx.boolean(false);
+                        result.set(&mut cx, "done", done)?;
                     }
 
-                    None => serde_json::to_vec(&ValueItem {
-                        value: None,
-                        done: true,
-                    })
-                    .unwrap(),
-                };
+                    None => {
+                        let done = cx.boolean(true);
+                        result.set(&mut cx, "done", done)?;
+                    }
+                }
 
-                JsBuffer::from_slice(&mut cx, result.as_slice())
+                Ok(result)
             }
         });
     });
