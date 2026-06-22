@@ -92,7 +92,7 @@ export type RecordedEvent = {
   type: string;
   isJson: boolean;
   revision: bigint;
-  created: Date;
+  created: number;
   data: Uint8Array;
   metadata: Uint8Array;
   position?: Position;

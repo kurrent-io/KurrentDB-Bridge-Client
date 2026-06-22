@@ -59,7 +59,7 @@ describe("read", () => {
     assert.strictEqual(typeof resolved.event.revision, "bigint");
     assert.strictEqual(typeof resolved.event.position.commit, "bigint");
     assert.strictEqual(typeof resolved.event.position.prepare, "bigint");
-    assert.ok(resolved.event.created instanceof Date);
+    assert.strictEqual(typeof resolved.event.created, "number");
     assert.ok(Buffer.isBuffer(resolved.event.data));
     assert.ok(Buffer.isBuffer(resolved.event.metadata));
   });
