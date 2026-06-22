@@ -430,6 +430,8 @@ pub fn read_stream_next_mutex(mut cx: FunctionContext) -> JsResult<JsPromise> {
                     }
 
                     None => {
+                        let array = JsArray::new(&mut cx, 0);
+                        result.set(&mut cx, "value", array)?;
                         let done = cx.boolean(true);
                         result.set(&mut cx, "done", done)?;
                     }
