@@ -11,7 +11,7 @@ use kurrentdb::{
 use neon::{
     prelude::FunctionContext,
     result::JsResult,
-    types::{JsBigInt, JsBoolean, JsDate, JsFunction, JsObject, JsPromise, JsString, JsValue},
+    types::{JsBigInt, JsBoolean, JsFunction, JsObject, JsPromise, JsString, JsValue},
 };
 use tokio::sync::{Mutex};
 
@@ -335,7 +335,7 @@ fn js_recorded_event<'a, C: Context<'a>>(
     let revision = JsBigInt::from_u64(cx, event.revision);
     obj.set(cx, "revision", revision)?;
 
-    let created = JsDate::new_lossy(cx, event.created.timestamp_millis() as f64);
+    let created = cx.number(event.created.timestamp_millis() as f64);
     obj.set(cx, "created", created)?;
 
     let data = JsBuffer::from_slice(cx, &event.data)?;
