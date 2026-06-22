@@ -57,7 +57,7 @@ jobs:
               return { os: "macos-latest", platform, script: "build" };
             });
             const windows = platforms.Windows.map(platform => {
-              return { os: "windows-latest", platform, script: "build" };
+              return { os: "windows-2022", platform, script: "build" };
             });
             const linux = platforms.Linux.map(platform => {
               return { os: "ubuntu-latest", platform, script: "cross" };
